@@ -7,21 +7,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 
-@Entity
-@Table(name = "permissions")
 @Getter
 @Setter
-public class Permissions implements GrantedAuthority {
+@Entity
+@Table(name = "advertisements")
+public class Advertisement {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String role;
-  @Override
-  public String getAuthority() {
-    return this.role;
-  }
-}
+  private String title;
 
+  private String description;
+
+  private double cost;
+
+  private boolean isActive;
+}
