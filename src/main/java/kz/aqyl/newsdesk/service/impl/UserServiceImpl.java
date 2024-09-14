@@ -9,7 +9,9 @@ import kz.aqyl.newsdesk.repository.PermissionsRepository;
 import kz.aqyl.newsdesk.repository.UserRepository;
 import kz.aqyl.newsdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -62,5 +64,14 @@ public class UserServiceImpl implements UserService {
     } else {
       throw new UsernameNotFoundException("Invalid credentials");
     }
+  }
+
+  @Override
+  public User getCurrentSessionUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+      return (User) authentication.getPrincipal();
+    }
+    return null;
   }
 }

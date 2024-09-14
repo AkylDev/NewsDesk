@@ -8,7 +8,7 @@ public interface AdvertisementService {
 
   AdvertisementDto addAdvertisement(AdvertisementDto advertisementDto);
 
-  List<AdvertisementDto> getAdvertisement();
+  List<AdvertisementDto> getAdvertisements();
 
   AdvertisementDto updateAdvertisement(Long id, AdvertisementDto advertisementDto);
 

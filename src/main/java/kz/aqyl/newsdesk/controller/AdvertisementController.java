@@ -30,7 +30,7 @@ public class AdvertisementController {
 
   @GetMapping
   public ResponseEntity<List<AdvertisementDto>> getAds() {
-    return new ResponseEntity<>(advertisementService.getAdvertisement(), HttpStatus.OK);
+    return new ResponseEntity<>(advertisementService.getAdvertisements(), HttpStatus.OK);
   }
 
   @PutMapping("/{id}")

@@ -15,7 +15,8 @@ public class AdvertisementMapper {
             advertisement.getId(),
             advertisement.getTitle(),
             advertisement.getDescription(),
-            advertisement.getCost()
+            advertisement.getCost(),
+            advertisement.getUser().getUsername()
     );
   }
 
