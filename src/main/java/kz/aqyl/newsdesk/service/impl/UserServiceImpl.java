@@ -9,6 +9,8 @@ import kz.aqyl.newsdesk.repository.PermissionsRepository;
 import kz.aqyl.newsdesk.repository.UserRepository;
 import kz.aqyl.newsdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,11 +31,13 @@ public class UserServiceImpl implements UserService {
   private final PermissionsRepository permissionsRepository;
   private final PasswordEncoder passwordEncoder;
   private final CustomUserDetailsService userDetailsService;
+  private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
   @Override
   public UserDto register(UserDto user) {
     Optional<User> checkUser = userRepository.findByEmail(user.email());
     if (checkUser.isPresent()) {
+      log.warn("User with email {} already exists", user.email());
       throw new IllegalArgumentException("User with this email already exists.");
     }
 
@@ -62,6 +66,7 @@ public class UserServiceImpl implements UserService {
       SecurityContextHolder.getContext().setAuthentication(authenticationToken);
       return UserMapper.toDto((User) userDetails);
     } else {
+      log.warn("Invalid login or password");
       throw new UsernameNotFoundException("Invalid credentials");
     }
   }

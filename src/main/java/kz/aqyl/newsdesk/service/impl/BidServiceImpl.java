@@ -14,6 +14,8 @@ import kz.aqyl.newsdesk.repository.BidRepository;
 import kz.aqyl.newsdesk.service.BidService;
 import kz.aqyl.newsdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,16 +32,20 @@ public class BidServiceImpl implements BidService {
 
   private final UserService userService;
 
+  private static final Logger log = LoggerFactory.getLogger(BidServiceImpl.class);
+
   @Override
-  public BidDto placeBid(Long AdId, double bidAmount) {
-    Advertisement advertisement = advertisementRepository.findById(AdId)
+  public BidDto placeBid(Long adId, double bidAmount) {
+    Advertisement advertisement = advertisementRepository.findById(adId)
             .orElseThrow(() -> new AdvertisementNotFoundException("Advertisement not found"));
 
     if (!advertisement.isActive()) {
+      log.warn("The bid with id {} is inactive", adId);
       throw new AdvertisementInactiveException("Cannot place bid on inactive advertisement");
     }
 
     if (bidAmount <= advertisement.getCurrentCost()) {
+      log.warn("Your bid {} is lower than minimum cost of the advertisement {}", bidAmount, advertisement.getMinCost());
       throw new IllegalArgumentException("Bid must be higher than the current cost");
     }
 
@@ -61,15 +67,18 @@ public class BidServiceImpl implements BidService {
     Optional<Bid> bidOptional = bidRepository.findById(id);
 
     if (bidOptional.isEmpty()){
+      log.warn("Bid with id {} not found", id);
       throw new BidNotFoundException("Bid not found");
     }
 
     Bid bid = bidOptional.get();
     if (!bid.getUser().getId().equals(userService.getCurrentSessionUser().getId())){
+      log.warn("You are not allowed to make changes into this bid with id {}", id);
       throw new UnauthorizedException("You are not authorized to change this bid");
     }
 
     if (newBidAmount < bid.getAdvertisement().getMinCost()){
+      log.warn("Your bid {} is lower than minimum cost of the advertisement", newBidAmount);
       throw new IllegalArgumentException("Your bid amount is lower than minimum cost for this advertisement");
     }
 
@@ -97,6 +106,7 @@ public class BidServiceImpl implements BidService {
 
     Bid bid = bidOptional.get();
     if (!bid.getUser().getId().equals(userService.getCurrentSessionUser().getId())){
+      log.warn("You are not allowed to delete this bid with id {}", id);
       throw new UnauthorizedException("You are not authorized to delete this bid");
     }
 

@@ -9,6 +9,8 @@ import kz.aqyl.newsdesk.repository.AdvertisementRepository;
 import kz.aqyl.newsdesk.service.AdvertisementService;
 import kz.aqyl.newsdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
   private final AdvertisementRepository advertisementRepository;
 
   private final UserService userService;
+
+  private static final Logger log = LoggerFactory.getLogger(AdvertisementServiceImpl.class);
 
   @Override
   public AdvertisementDto addAdvertisement(AdvertisementDto advertisementDto) {
@@ -45,11 +49,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
 
     if (advertisementOptional.isEmpty()) {
+      log.warn("Advertisement with id {} not found", id);
       throw new UsernameNotFoundException("Username not found");
     }
 
     Advertisement advertisement = advertisementOptional.get();
     if (!advertisement.getUser().getId().equals(userService.getCurrentSessionUser().getId())){
+      log.warn("You are not allowed to update this advertisement with id {}", id);
       throw new UnauthorizedException("You are not authorized to change this account");
     }
 
@@ -74,6 +80,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     Advertisement advertisement = advertisementOptional.get();
     if (!advertisement.getUser().getId().equals(userService.getCurrentSessionUser().getId())){
+      log.warn("You are not allowed to delete this advertisement with id {}", id);
       throw new UnauthorizedException("You are not authorized to delete this account");
     }
 
