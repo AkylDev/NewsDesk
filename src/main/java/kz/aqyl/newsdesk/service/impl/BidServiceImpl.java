@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,6 +57,10 @@ public class BidServiceImpl implements BidService {
 
     User currentUser = userService.getCurrentSessionUser();
 
+    if (advertisement.getAuctionEndTime() == null) {
+      advertisement.setAuctionEndTime(LocalDateTime.now().plusSeconds(30));
+    }
+
     if (advertisement.getCurrentCost() > advertisement.getMinCost()) {
       Bid previousBid = bidRepository.findTopByAdvertisement_IdOrderByBidAmountDesc(advertisement.getId())
               .orElse(null);
@@ -74,6 +79,7 @@ public class BidServiceImpl implements BidService {
 
     return BidMapper.toDto(bidRepository.save(bid));
   }
+
 
   @Override
   public BidDto updateBid(Long id, double newBidAmount) {

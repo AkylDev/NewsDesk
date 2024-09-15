@@ -10,6 +10,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -28,6 +30,8 @@ public class Advertisement {
   private double currentCost;
 
   private boolean isActive;
+
+  private LocalDateTime auctionEndTime;
 
   @ManyToOne
   @JoinColumn(name = "user_id")

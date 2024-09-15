@@ -20,6 +20,8 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   public void sendAuctionWonNotification(User buyer, User seller, Advertisement advertisement) {
-
+    log.info("Auction won for advertisement {} (Title: {}). Buyer: {}, Seller: {}.",
+            advertisement.getId(), advertisement.getTitle(),
+            buyer.getUsername(), seller.getUsername());
   }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT a FROM Advertisement a WHERE a.id = :id")
   Optional<Advertisement> findByIdWithLock(@Param("id") Long id);
+
+  @Query("SELECT a FROM Advertisement a WHERE a.isActive = true")
+  List<Advertisement> findAllActiveAdvertisements();
 }
