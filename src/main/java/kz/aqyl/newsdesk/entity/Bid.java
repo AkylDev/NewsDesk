@@ -13,23 +13,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "advertisements")
-public class Advertisement {
+@Table(name = "bids")
+public class Bid {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String title;
-
-  private String description;
-
-  private double minCost;
-
-  private double currentCost;
-
-  private boolean isActive;
+  private double bidAmount;
 
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  @ManyToOne
+  @JoinColumn(name = "advertisement_id")
+  private Advertisement advertisement;
 }
+

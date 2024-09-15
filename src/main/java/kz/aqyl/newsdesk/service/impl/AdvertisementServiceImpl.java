@@ -28,6 +28,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
   public AdvertisementDto addAdvertisement(AdvertisementDto advertisementDto) {
     Advertisement advertisement = AdvertisementMapper.toEntity(advertisementDto);
     advertisement.setUser(userService.getCurrentSessionUser());
+    advertisement.setCurrentCost(advertisementDto.minCost());
     return AdvertisementMapper.toDto(advertisementRepository.save(advertisement));
   }
 
@@ -54,7 +55,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     advertisement.setTitle(advertisementDto.title());
     advertisement.setDescription(advertisementDto.description());
-    advertisement.setCost(advertisementDto.cost());
+    advertisement.setMinCost(advertisementDto.minCost());
+
+    if (advertisementDto.minCost() > advertisement.getCurrentCost()){
+      advertisement.setCurrentCost(advertisementDto.minCost());
+    }
 
     return AdvertisementMapper.toDto(advertisementRepository.save(advertisement));
   }

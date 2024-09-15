@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ad")
+@RequestMapping("/advertisements")
 public class AdvertisementController {
 
   private final AdvertisementService advertisementService;
