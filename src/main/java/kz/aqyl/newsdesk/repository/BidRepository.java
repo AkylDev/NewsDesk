@@ -10,11 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Long> {
-  List<Bid> findByAdvertisementIdOrderByBidAmountDesc(Long advertisementId);
-
   @NonNull
   Optional<Bid> findById(@NonNull Long id);
 
   List<Bid> findAllByUserId(Long id);
+
+  @NonNull
+  Optional<Bid> findTopByAdvertisement_IdOrderByBidAmountDesc(@NonNull Long id);
 }
 

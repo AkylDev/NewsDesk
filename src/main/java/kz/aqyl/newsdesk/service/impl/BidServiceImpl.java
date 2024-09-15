@@ -1,5 +1,6 @@
 package kz.aqyl.newsdesk.service.impl;
 
+import jakarta.transaction.Transactional;
 import kz.aqyl.newsdesk.dto.BidDto;
 import kz.aqyl.newsdesk.entity.Advertisement;
 import kz.aqyl.newsdesk.entity.Bid;
@@ -12,6 +13,7 @@ import kz.aqyl.newsdesk.mapper.BidMapper;
 import kz.aqyl.newsdesk.repository.AdvertisementRepository;
 import kz.aqyl.newsdesk.repository.BidRepository;
 import kz.aqyl.newsdesk.service.BidService;
+import kz.aqyl.newsdesk.service.NotificationService;
 import kz.aqyl.newsdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -32,24 +34,35 @@ public class BidServiceImpl implements BidService {
 
   private final UserService userService;
 
+  private final NotificationService notificationService;
+
   private static final Logger log = LoggerFactory.getLogger(BidServiceImpl.class);
 
+  @Transactional
   @Override
-  public BidDto placeBid(Long adId, double bidAmount) {
-    Advertisement advertisement = advertisementRepository.findById(adId)
+  public BidDto placeBid(Long advertisementId, double bidAmount) {
+    Advertisement advertisement = advertisementRepository.findByIdWithLock(advertisementId)
             .orElseThrow(() -> new AdvertisementNotFoundException("Advertisement not found"));
 
     if (!advertisement.isActive()) {
-      log.warn("The bid with id {} is inactive", adId);
+      log.warn("The advertisement with id {} is inactive", advertisementId);
       throw new AdvertisementInactiveException("Cannot place bid on inactive advertisement");
     }
 
     if (bidAmount <= advertisement.getCurrentCost()) {
-      log.warn("Your bid {} is lower than minimum cost of the advertisement {}", bidAmount, advertisement.getMinCost());
+      log.warn("Your bid {} is lower than current cost of the advertisement {}", bidAmount, advertisement.getCurrentCost());
       throw new IllegalArgumentException("Bid must be higher than the current cost");
     }
 
     User currentUser = userService.getCurrentSessionUser();
+
+    if (advertisement.getCurrentCost() > advertisement.getMinCost()) {
+      Bid previousBid = bidRepository.findTopByAdvertisement_IdOrderByBidAmountDesc(advertisement.getId())
+              .orElse(null);
+      if (previousBid != null && !previousBid.getUser().equals(currentUser)) {
+        notificationService.sendOutbidNotification(previousBid.getUser(), advertisement);
+      }
+    }
 
     Bid bid = new Bid();
     bid.setBidAmount(bidAmount);
