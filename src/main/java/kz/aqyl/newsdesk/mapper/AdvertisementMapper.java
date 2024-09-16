@@ -17,7 +17,8 @@ public class AdvertisementMapper {
             advertisement.getDescription(),
             advertisement.getMinCost(),
             advertisement.getCurrentCost(),
-            advertisement.getUser().getUsername()
+            advertisement.getUser().getUsername(),
+            advertisement.getImageUrl()
     );
   }
 
@@ -28,6 +29,7 @@ public class AdvertisementMapper {
     advertisement.setDescription(advertisementDto.description());
     advertisement.setMinCost(advertisementDto.minCost());
     advertisement.setCurrentCost(advertisementDto.currentCost());
+    advertisement.setImageUrl(advertisementDto.imageUrl());
     advertisement.setActive(true);
     return advertisement;
   }

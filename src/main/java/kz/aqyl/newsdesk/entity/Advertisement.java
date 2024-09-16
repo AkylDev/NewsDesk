@@ -33,6 +33,8 @@ public class Advertisement {
 
   private LocalDateTime auctionEndTime;
 
+  private String imageUrl;
+
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;

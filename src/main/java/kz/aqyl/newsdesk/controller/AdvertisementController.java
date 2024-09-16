@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.aqyl.newsdesk.dto.AdvertisementDto;
 import kz.aqyl.newsdesk.service.AdvertisementService;
+import kz.aqyl.newsdesk.service.MinioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,6 +31,7 @@ import java.util.List;
 public class AdvertisementController {
 
   private final AdvertisementService advertisementService;
+  private final MinioService minioService;
 
   @Operation(summary = "Добавить объявление", description = "Создать новое объявление с указанием всех необходимых полей")
   @ApiResponses(value = {
@@ -70,5 +74,12 @@ public class AdvertisementController {
   public ResponseEntity<Void> deleteAd(@PathVariable(name = "id") @Parameter(description = "ID объявления") Long id) {
     advertisementService.deleteAdvertisement(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @PostMapping("/{id}/upload")
+  public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    String fileName = minioService.uploadFile(file);
+    advertisementService.updateAdvertisementImage(id, fileName);
+    return ResponseEntity.ok(fileName);
   }
 }

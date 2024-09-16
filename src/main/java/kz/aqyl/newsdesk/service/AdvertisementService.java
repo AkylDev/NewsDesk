@@ -13,4 +13,6 @@ public interface AdvertisementService {
   AdvertisementDto updateAdvertisement(Long id, AdvertisementDto advertisementDto);
 
   void deleteAdvertisement(Long id);
+
+  void updateAdvertisementImage(Long id, String imageUrl);
 }

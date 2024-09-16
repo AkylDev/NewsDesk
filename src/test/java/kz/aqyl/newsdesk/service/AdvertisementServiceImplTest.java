@@ -37,7 +37,7 @@ public class AdvertisementServiceImplTest {
   void addAdvertisement_ShouldAddNewAdvertisement_WhenValidInput() {
     User user = new User();
     user.setId(1L);
-    AdvertisementDto adDto = new AdvertisementDto(1L, "Title", "Description", 100.0, 100.0, null);
+    AdvertisementDto adDto = new AdvertisementDto(1L, "Title", "Description", 100.0, 100.0, null, null);
     Advertisement adEntity = AdvertisementMapper.toEntity(adDto);
     adEntity.setUser(user);
     adEntity.setCurrentCost(adDto.minCost());
@@ -63,7 +63,7 @@ public class AdvertisementServiceImplTest {
     ad.setId(1L);
     ad.setUser(user);
 
-    AdvertisementDto updatedAdDto = new AdvertisementDto(1L, "New title", "New description", 150.0, 150.0, null);
+    AdvertisementDto updatedAdDto = new AdvertisementDto(1L, "New title", "New description", 150.0, 150.0, null, null);
 
     when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
     when(userService.getCurrentSessionUser()).thenReturn(user);
@@ -91,7 +91,7 @@ public class AdvertisementServiceImplTest {
     ad.setId(1L);
     ad.setUser(owner);
 
-    AdvertisementDto updatedAdDto = new AdvertisementDto(1L, "New title", "New description", 150.0, 150.0, null);
+    AdvertisementDto updatedAdDto = new AdvertisementDto(1L, "New title", "New description", 150.0, 150.0, null, null);
 
     when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
     when(userService.getCurrentSessionUser()).thenReturn(anotherUser);

@@ -86,4 +86,22 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     advertisementRepository.deleteById(id);
   }
+
+  @Override
+  public void updateAdvertisementImage(Long id, String imageUrl) {
+    Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
+
+    if (advertisementOptional.isEmpty()){
+      throw new UserAdvertisementNotFoundException("Advertisement not found");
+    }
+
+    Advertisement advertisement = advertisementOptional.get();
+    if (!advertisement.getUser().getId().equals(userService.getCurrentSessionUser().getId())){
+      log.warn("You are not allowed to upload image to this advertisement with id {}", id);
+      throw new UnauthorizedException("You are not authorized to delete this account");
+    }
+
+    advertisement.setImageUrl(imageUrl);
+    advertisementRepository.save(advertisement);
+  }
 }
