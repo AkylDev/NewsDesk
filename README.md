@@ -17,14 +17,14 @@
    git clone <repository-url>
    ```
 2. Соберите проект:
-```bash
-./gradlew build
-```
+   ```bash
+   ./gradlew build
+   ```
 
 3. Запустите с помощью Docker Compose:
-```bash
-docker-compose up
-```
+   ```bash
+   docker-compose up
+   ```
 
 Приложение будет доступно по адресу: `http://localhost:8088`
 
