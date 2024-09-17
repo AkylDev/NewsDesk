@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    container_name: newsdesk-db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: newsdesk
+    ports:
+      - "5454:5432"
+    networks:
+      - app-network
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ACCESS_KEY: 5axVCGVAwGa7HLpMOgF7
+      MINIO_SECRET_KEY: m7TZ4eSq9ldCS3HglYEZok5aHcTXH3hjBjEMlewJ
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: project-container
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: newsdesk
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESSKEY: 5axVCGVAwGa7HLpMOgF7
+      MINIO_SECRETKEY: m7TZ4eSq9ldCS3HglYEZok5aHcTXH3hjBjEMlewJ
+      MINIO_BUCKETNAME: advertisement
+    depends_on:
+      - postgres
+      - minio
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
